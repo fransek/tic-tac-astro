@@ -4,7 +4,7 @@ import {
   type Board,
   type Player,
   type Tile,
-} from '../utils/utils'
+} from './common'
 
 const AI_THRESHOLD = 1
 const PLAYER_THRESHOLD = 25
@@ -15,23 +15,16 @@ const WIN_SCORE = 100
 const AI_TWO_IN_A_ROW_SCORE = 25
 const PLAYER_TWO_IN_A_ROW_SCORE = -50
 
-export const getAIMove = async (board: Board): Promise<Board> => {
-  const bestMoveIndex = getBestMove(board)
-  const newBoard = [...board]
-  newBoard[bestMoveIndex] = 'O'
-  return newBoard
-}
-
 const getEmptyIndices = (board: Board): number[] => {
   return board.reduce((acc: number[], tile, index) => {
-    if (tile === null) {
+    if (tile === '') {
       acc.push(index)
     }
     return acc
   }, [])
 }
 
-const getBestMove = (board: Board): number => {
+export const getBestMoveIndex = (board: Board): number => {
   const scores: Record<string, number> = {}
 
   const simMoves = (
@@ -94,7 +87,7 @@ const getHeuristicBoardScore = (board: Board, player: Player) => {
   for (const combo of winningCombos) {
     const opponentCount = getCount(combo, board, opponent)
     const playerCount = getCount(combo, board, player)
-    const emptyCount = getCount(combo, board, null)
+    const emptyCount = getCount(combo, board, '')
     if (playerCount === 3) {
       score += WIN_SCORE
     } else if (playerCount === 2 && emptyCount === 1) {

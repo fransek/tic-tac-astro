@@ -1,6 +1,6 @@
 export type Player = 'X' | 'O'
-export type Tile = Player | null
-export type Winner = Player | null | 'draw'
+export type Tile = Player | ''
+export type Winner = Player | '' | 'draw'
 export type Board = Tile[]
 
 export const winningCombos = [
@@ -20,13 +20,13 @@ export const getWinner = (board: Board): Winner => {
       return board[a]
     }
   }
-  if (board.every((tile) => tile !== null)) {
+  if (board.every((tile) => tile !== '')) {
     return 'draw'
   }
-  return null
+  return ''
 }
 
-export const getEmptyBoard = (): Board => Array(9).fill(null)
+export const getEmptyBoard = (): Board => Array(9).fill('')
 
 export const cn = (
   ...classes: (string | undefined | Record<string, boolean>)[]

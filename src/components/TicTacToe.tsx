@@ -1,5 +1,5 @@
+import { actions } from 'astro:actions'
 import { For, Show, createSignal } from 'solid-js'
-import { getAIMove } from '../utils/ai'
 import {
   cn,
   getEmptyBoard,
@@ -7,34 +7,41 @@ import {
   type Board,
   type Tile,
   type Winner,
-} from '../utils/utils'
+} from '../utils/common'
 
 export default function Home() {
   const [board, setBoard] = createSignal<Board>(getEmptyBoard())
   const [isPlayersTurn, setIsPlayersTurn] = createSignal(true)
-  const [winner, setWinner] = createSignal<Winner>(null)
+  const [winner, setWinner] = createSignal<Winner>('')
 
   const makeMove = async (tile: Tile, index: number) => {
-    if (tile === null && isPlayersTurn()) {
-      setIsPlayersTurn(false)
-      const newBoard = [...board()]
-      newBoard[index] = 'X'
-      setBoard(newBoard)
-      if (checkWinner(newBoard)) {
-        return
-      }
-      const newerBoard = await getAIMove(newBoard)
-      setBoard(newerBoard)
-      if (checkWinner(newerBoard)) {
-        return
-      }
-      setIsPlayersTurn(true)
+    if (tile !== '' || !isPlayersTurn()) {
+      return
     }
+    setIsPlayersTurn(false)
+    const newBoard = [...board()]
+    newBoard[index] = 'X'
+    setBoard(newBoard)
+    if (checkWinner(newBoard)) {
+      return
+    }
+    const newerBoard = await makeAIMove(newBoard)
+    if (checkWinner(newerBoard)) {
+      return
+    }
+    setIsPlayersTurn(true)
+  }
+
+  const makeAIMove = async (board: Board): Promise<Board> => {
+    const res = await actions.ai({ board })
+    const newBoard = [...board]
+    newBoard[res.index] = 'O'
+    setBoard(newBoard)
+    return newBoard
   }
 
   const checkWinner = (board: Board) => {
     const winner = getWinner(board)
-    console.log(winner)
     if (winner) {
       setWinner(winner)
       return true
@@ -44,7 +51,7 @@ export default function Home() {
 
   const restart = () => {
     setBoard(getEmptyBoard())
-    setWinner(null)
+    setWinner('')
     setIsPlayersTurn(true)
   }
 
@@ -56,7 +63,7 @@ export default function Home() {
             <div
               class={cn(
                 'bg-gray-200 w-20 h-20 flex justify-center items-center text-5xl font-bold rounded',
-                tile === null && isPlayersTurn()
+                tile === '' && isPlayersTurn()
                   ? 'cursor-pointer'
                   : 'cursor-default',
                 {
