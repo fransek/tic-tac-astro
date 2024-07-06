@@ -56,15 +56,15 @@ export default function Home() {
   }
 
   return (
-    <div>
+    <>
       <div class='grid grid-cols-3 gap-2 w-fit'>
         <For each={board()}>
           {(tile, index) => (
-            <div
+            <button
               class={cn(
-                'bg-gray-200 w-20 h-20 flex justify-center items-center text-5xl font-bold rounded',
+                'bg-gray-200 w-20 h-20 flex justify-center items-center text-5xl font-bold rounded shadow-md shadow-black transition-colors',
                 tile === '' && isPlayersTurn()
-                  ? 'cursor-pointer'
+                  ? 'cursor-pointer hover:bg-gray-300'
                   : 'cursor-default',
                 {
                   'text-red-600': tile === 'X',
@@ -74,21 +74,25 @@ export default function Home() {
               onClick={() => makeMove(tile, index())}
             >
               {tile}
-            </div>
+            </button>
           )}
         </For>
       </div>
       <Show when={winner()}>
-        <p class='text-2xl font-bold'>
-          {winner() === 'draw' ? 'Draw!' : `${winner()} wins!`}
+        <p class='text-2xl font-bold animate-bounce'>
+          {winner() === 'draw'
+            ? 'Draw! 🤝'
+            : winner() === 'X'
+            ? 'You win! 🎉'
+            : 'You lose! 🤡'}
         </p>
         <button
           onClick={restart}
-          class='text-xl rounded-lg bg-blue-600 py-2 px-4'
+          class='text-xl rounded-lg bg-green-700 py-2 px-4 hover:bg-green-800 transition-colors'
         >
           Play again
         </button>
       </Show>
-    </div>
+    </>
   )
 }
