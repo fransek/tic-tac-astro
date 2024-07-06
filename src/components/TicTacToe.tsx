@@ -56,7 +56,7 @@ export default function Home() {
   }
 
   return (
-    <main class='flex items-center flex-col gap-4 pt-40'>
+    <div>
       <div class='grid grid-cols-3 gap-2 w-fit'>
         <For each={board()}>
           {(tile, index) => (
@@ -89,6 +89,6 @@ export default function Home() {
           Play again
         </button>
       </Show>
-    </main>
+    </div>
   )
 }
